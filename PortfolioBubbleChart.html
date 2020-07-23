@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<!-- Load d3.js -->
+<script src="https://d3js.org/d3.v4.js"></script>
+
+<!-- Create a div where the chart will take place -->
+<div id="div_basicResize" style="width: 100%; text-align:center"></div>
+
+<script type="text/javascript">
+
+// Initialize a SVG area. Note that the width is not specified yet, since unknown
+var Svg = d3.select("#div_basicResize")
+  .append("svg")
+  .attr("height", 600)
+
+//Add static circle to view sum of Units sold.
+Svg.append("circle")
+  .attr("id", "staticCircle")
+  .attr("cx", 100)
+  .attr("cy", 50)
+  .attr("r", 50)
+  .attr("fill", "#69b3a2")
+  .append('text')
+    .text("Text")
+    .attr('color', 'black')
+    .attr('font-size', 15) 
+
+  dataset = {
+      "children": [{"Family":"HPCL","Price":100,"Processor":"i5","Screensize":14.5,"RAM":"16GB","HardDisk":"1TB","Units":10,"Category":"Modern"},
+          {"Family":"HPCL","Price":200,"Processor":"i7","Screensize":14.5,"RAM":"8GB","HardDisk":"500GB","Units":30,"Category":"NonModern"},
+          {"Family":"HP","Price":300,"Processor":"i5","Screensize":14.5,"RAM":"32GB","HardDisk":"500GB","Units":40,"Category":"NonModern"},
+          {"Family":"Microsoft","Price":250,"Processor":"i3","Screensize":14.5,"RAM":"16GB","HardDisk":"1TB","Units":20,"Category":"Modern"},
+          {"Family":"HP","Price":150,"Processor":"i3","Screensize":14.5,"RAM":"16GB","HardDisk":"1TB","Units":20,"Category":"Modern"},
+          {"Family":"Microsoft","Price":650,"Processor":"i3","Screensize":14.5,"RAM":"16GB","HardDisk":"1TB","Units":50,"Category":"NonModern"},
+          {"Family":"Microsoft","Price":350,"Processor":"i3","Screensize":14.5,"RAM":"16GB","HardDisk":"1TB","Units":55,"Category":"Modern"},
+          {"Family":"Microsoft","Price":500,"Processor":"i3","Screensize":14.5,"RAM":"16GB","HardDisk":"1TB","Units":20,"Category":"Modern"},
+          {"Family":"HP","Price":420,"Processor":"i3","Screensize":14.5,"RAM":"16GB","HardDisk":"1TB","Units":35,"Category":"NonModern"},
+          {"Family":"DELL","Price":1000,"Processor":"i3","Screensize":14.5,"RAM":"16GB","HardDisk":"1TB","Units":25,"Category":"NonModern"},
+          {"Family":"Lenovo","Price":700,"Processor":"i3","Screensize":14.5,"RAM":"16GB","HardDisk":"1TB","Units":45,"Category":"Modern"},
+          {"Family":"HP","Price":605,"Processor":"i3","Screensize":14.5,"RAM":"16GB","HardDisk":"1TB","Units":30,"Category":"Modern"},
+          {"Family":"HP","Price":900,"Processor":"i3","Screensize":14.5,"RAM":"16GB","HardDisk":"1TB","Units":60,"Category":"Modern"}]
+  };
+  var jsonObj=JSON.parse(JSON.stringify(dataset.children));
+  var modernData=Array();
+  var nonModernData=Array();
+
+for (i = 0; i < jsonObj.length; i++) {
+  if(jsonObj[i].Category=="Modern"){
+      modernData.push(jsonObj[i]);
+  } else {
+    nonModernData.push(jsonObj[i]);
+  }
+}
+var modernPrices=[];
+var nonModernPrices=[];
+
+// Create dummy data
+modernData.forEach(element => modernPrices.push('$'+element.Price));
+nonModernData.forEach(element => nonModernPrices.push(element.Price));
+
+// Add X axis. Note that we don't know the range yet, so we cannot draw it.
+// var x = d3.scaleLinear(d3.schemeCategory20c)
+//   .domain([0, 500])
+var xScale = d3.scaleLinear ()
+  .domain([0, 1000])
+
+var xAxis = Svg.append("g")
+  .attr("transform", "translate(0,200)")
+
+// Initialize circles. Note that the X scale is not available yet, so we cannot draw them
+var modernCirclesGroup = Svg
+  .selectAll("circles")
+  .data(modernData)
+  .enter()
+  .append("g")
+
+var modernCircles = modernCirclesGroup.append("circle")
+  .data(modernData)
+  .style("fill", "#69b2b3")
+  .style("opacity", "0.5")
+  .attr("stroke", "black")
+  .attr("r",function(d){return d.Units;})
+  .attr("cy", 100);
+
+//Add a tooltip on Mouse Hover each Bubble
+modernCirclesGroup.append("title")
+  .text(function(d) { return d.Family+ ": " + d.Processor; });
+
+var modernCirclesText = modernCirclesGroup.append("text")
+  .attr("dy", 100)
+  .style("text-anchor", "middle")
+  .text(function(d) {
+    return d.Family.substring(0, d.Units / 3) + " "+ d.Units ;
+  })
+  .attr("font-family", "sans-serif")
+  .attr("font-size", function(d){
+      return d.Units/4;
+  })
+  .attr("fill", "green");
+
+  modernCirclesText.append("text")
+  .attr("dy", 100)
+  .style("text-anchor", "middle")
+  .text(function(d) {
+    return d.Processor.substring(0, d.Units / 3)+"," + d.Screensize;
+  })
+  .attr("font-family", "sans-serif")
+  .attr("font-size", function(d){
+      return d.Units/4;
+  })
+  .attr("fill", "red");
+
+
+
+var nonModernCirclesGroup = Svg
+  .selectAll("circles")
+  .data(nonModernData)
+  .enter()
+  .append("g");
+
+var nonModernCircles = nonModernCirclesGroup.append("circle")
+  .data(nonModernData)
+  .style("fill", "#69b2b3")
+  .style("opacity", "0.5")
+  .attr("stroke", "black")
+  .attr("r",function(d){return d.Units;})
+  .attr("cy", 50);
+
+//Add a tooltip on Mouse Hover each Bubble
+nonModernCirclesGroup.append("title")
+  .text(function(d) { return d.Family+ ": " + d.Processor; });
+
+//Add text to the group    
+var nonModernCirclesText = nonModernCirclesGroup.append("text")
+  .attr("dy", 50)
+  .style("text-anchor", "middle")
+  .text(function(d) {
+    return d.Family.substring(0, d.Units / 3) + d.Units ;
+  })
+  .attr("font-family", "sans-serif")
+  .attr("font-size", function(d){
+      return d.Units/4;
+  })
+  .attr("fill", "green");
+
+
+// A function that finishes to draw the chart for a specific device size.
+function drawChart() {
+
+  // get the current width of the div where the chart appear, and attribute it to Svg
+  currentWidth = 1100
+  Svg.attr("width", currentWidth)
+
+  // Update the X scale and Axis (here the 20 is just to have a bit of margin)
+  xScale.range([ 20, currentWidth-100 ]);
+  var tickLabels = ['$300','$500','$800'];
+
+  xAxis.call(d3.axisBottom(xScale).ticks(3).tickValues([300,500,800]).tickFormat(function(d,i){ return tickLabels[i]}))
+ 
+  // Add the last information needed for the circles: their X position
+  modernCircles.attr("cx", function(d){ return xScale(d.Price)})
+  modernCirclesText.attr("dx", function(d){ return xScale(d.Price)})
+
+  nonModernCircles.attr("cx", function(d){ return xScale(d.Price)})
+  nonModernCirclesText.attr("dx", function(d){ return xScale(d.Price)})
+
+  nonModernCirclesGroup
+  .attr("transform", function(d) {
+        var k = "translate(" + 0 + ",250"+")";
+        return k;
+  })
+
+} // end of function drawChart
+
+// Initialize the chart
+drawChart()
+
+// Add an event listener that run the function when dimension change
+window.addEventListener('resize', drawChart );
+
+</script>

@@ -13,19 +13,7 @@
 var Svg = d3.select("#div_basicResize")
   .append("svg")
   .attr("height", 600)
-
-//Add static circle to view sum of Units sold.
-Svg.append("circle")
-  .attr("id", "staticCircle")
-  .attr("cx", 100)
-  .attr("cy", 50)
-  .attr("r", 50)
-  .attr("fill", "#69b3a2")
-  .append('text')
-    .text("Text")
-    .attr('color', 'black')
-    .attr('font-size', 15) 
-
+ 
   dataset = {
       "children": [{"Family":"HPCL","Price":100,"Processor":"i5","Screensize":14.5,"RAM":"16GB","HardDisk":"1TB","Units":10,"Category":"Modern"},
           {"Family":"HPCL","Price":200,"Processor":"i7","Screensize":14.5,"RAM":"8GB","HardDisk":"500GB","Units":30,"Category":"NonModern"},
@@ -52,12 +40,98 @@ for (i = 0; i < jsonObj.length; i++) {
     nonModernData.push(jsonObj[i]);
   }
 }
-var modernPrices=[];
-var nonModernPrices=[];
+// var modernPrices=[];
+// var nonModernPrices=[];
 
-// Create dummy data
-modernData.forEach(element => modernPrices.push('$'+element.Price));
-nonModernData.forEach(element => nonModernPrices.push(element.Price));
+// // Create dummy data
+// modernData.forEach(element => modernPrices.push('$'+element.Price));
+// nonModernData.forEach(element => nonModernPrices.push(element.Price));
+var totalModernUnits=0;
+ modernData.forEach(element => totalModernUnits += element.Units);
+
+//Create group element
+var g = Svg.append("g")
+               .attr("transform", function(d, i) {
+                        return "translate(60,0)";
+               });
+  //Create and append ellipse element into group
+   g.append("circle")
+                 //      .data(totalUnits)
+                      .style("fill", "Blue")
+                      .style("opacity", "0.4")
+                      .attr("stroke", "black")
+                      .attr("r",30)
+                      .attr("cy", 50);
+   //Create and append text element into group
+             //Add a tooltip on Mouse Hover each Bubble
+g.append("title")
+  .text("Sum of Units :"+ totalModernUnits);
+                g.append("text")
+                  .attr("dy", 50)
+                  .style("text-anchor", "middle")
+                  .text(totalModernUnits)
+                  .attr("font-family", "sans-serif")
+                  .attr("font-size", 10)
+                  .attr("fill", "green");
+  //Create and append ellipse element into group
+                g.append("circle")
+                 //      .data(totalUnits)
+                      .style("fill", "Blue")
+                      .style("opacity", "0.4")
+                      .attr("stroke", "black")
+                      .attr("r",30)
+                      .attr("cx", 60)
+                      .attr("cy", 50)
+                      .append("title")
+                         .text("Sales Grade :"+ "50%");
+                      
+   //Create and append text element into group
+             //Add a tooltip on Mouse Hover each Bubble
+                g.append("text")
+                  .attr("dx", 60)
+                  .attr("dy", 50)
+                  .style("text-anchor", "middle")
+                  .text("50%")
+                  .attr("font-family", "sans-serif")
+                  .attr("font-size", 10)
+                  .attr("fill", "green");
+var totalNonModernUnits=0;
+ nonModernData.forEach(element => totalNonModernUnits += element.Units);
+//console.log(totalNonModernUnits);
+                g.append("circle")
+                      .style("fill", "Blue")
+                      .style("opacity", "0.4")
+                      .attr("stroke", "black")
+                      .attr("r",30)
+                      .attr("cy", 300)
+                      .append("title")
+                         .text("Sum of Units :"+ totalNonModernUnits);
+                g.append("text")
+                  .attr("dy", 300)
+                  .style("text-anchor", "middle")
+                  .text(totalNonModernUnits)
+                  .attr("font-family", "sans-serif")
+                  .attr("font-size", 10)
+                  .attr("fill", "green");
+          g.append("circle")
+                      .style("fill", "Blue")
+                      .style("opacity", "0.4")
+                      .attr("stroke", "black")
+                      .attr("r",30)
+                      .attr("cx", 60)
+                      .attr("cy", 300)
+                      .append("title")
+                        .text("Sales Grade :"+ "50%");
+
+                g.append("text")
+                  .attr("dx", 60)
+                  .attr("dy", 300)
+                  .style("text-anchor", "middle")
+                  .text("50%")
+                  .attr("font-family", "sans-serif")
+                  .attr("font-size", 10)
+                  .attr("fill", "green");
+        
 
 // Add X axis. Note that we don't know the range yet, so we cannot draw it.
 // var x = d3.scaleLinear(d3.schemeCategory20c)
@@ -87,8 +161,8 @@ var modernCircles = modernCirclesGroup.append("circle")
 modernCirclesGroup.append("title")
   .text(function(d) { return d.Family+ ": " + d.Processor; });
 
-var modernCirclesText = modernCirclesGroup.append("text")
-  .attr("dy", 100)
+  var modernCirclesText1 = modernCirclesGroup.append("text")
+  .attr("dy", 90)
   .style("text-anchor", "middle")
   .text(function(d) {
     return d.Family.substring(0, d.Units / 3) + " "+ d.Units ;
@@ -99,19 +173,29 @@ var modernCirclesText = modernCirclesGroup.append("text")
   })
   .attr("fill", "green");
 
-  modernCirclesText.append("text")
-  .attr("dy", 100)
+  var modernCirclesText2 = modernCirclesGroup.append("text")
+  .attr("dy", 105)
   .style("text-anchor", "middle")
   .text(function(d) {
-    return d.Processor.substring(0, d.Units / 3)+"," + d.Screensize;
+    return "$" + d.Price + "," + d.Processor + "," + d.Screensize;
   })
   .attr("font-family", "sans-serif")
   .attr("font-size", function(d){
       return d.Units/4;
   })
-  .attr("fill", "red");
+  .attr("fill", "green");
 
-
+  var modernCirclesText3 = modernCirclesGroup.append("text")
+  .attr("dy", 120)
+  .style("text-anchor", "middle")
+  .text(function(d) {
+    return d.RAM + "," + d.HardDisk + "," + d.Units + "Ku";
+  })
+  .attr("font-family", "sans-serif")
+  .attr("font-size", function(d){
+      return d.Units/4;
+  })
+  .attr("fill", "green");
 
 var nonModernCirclesGroup = Svg
   .selectAll("circles")
@@ -132,8 +216,8 @@ nonModernCirclesGroup.append("title")
   .text(function(d) { return d.Family+ ": " + d.Processor; });
 
 //Add text to the group    
-var nonModernCirclesText = nonModernCirclesGroup.append("text")
-  .attr("dy", 50)
+var nonModernCirclesText1 = nonModernCirclesGroup.append("text")
+  .attr("dy", 30)
   .style("text-anchor", "middle")
   .text(function(d) {
     return d.Family.substring(0, d.Units / 3) + d.Units ;
@@ -143,6 +227,30 @@ var nonModernCirclesText = nonModernCirclesGroup.append("text")
       return d.Units/4;
   })
   .attr("fill", "green");
+
+var nonModernCirclesText2 = nonModernCirclesGroup.append("text")
+.attr("dy", 50)
+.style("text-anchor", "middle")
+.text(function(d) {
+  return "$" + d.Price + "," + d.Processor + "," + d.Screensize;
+})
+.attr("font-family", "sans-serif")
+.attr("font-size", function(d){
+    return d.Units/4;
+})
+.attr("fill", "green");
+
+var nonModernCirclesText3 = nonModernCirclesGroup.append("text")
+.attr("dy", 70)
+.style("text-anchor", "middle")
+.text(function(d) {
+  return d.RAM + "," + d.HardDisk + "," + d.Units + "Ku";
+})
+.attr("font-family", "sans-serif")
+.attr("font-size", function(d){
+    return d.Units/4;
+})
+.attr("fill", "green");
 
 
 // A function that finishes to draw the chart for a specific device size.
@@ -160,10 +268,14 @@ function drawChart() {
  
   // Add the last information needed for the circles: their X position
   modernCircles.attr("cx", function(d){ return xScale(d.Price)})
-  modernCirclesText.attr("dx", function(d){ return xScale(d.Price)})
+  modernCirclesText1.attr("dx", function(d){ return xScale(d.Price)})
+  modernCirclesText2.attr("dx", function(d){ return xScale(d.Price)})
+  modernCirclesText3.attr("dx", function(d){ return xScale(d.Price)})
 
   nonModernCircles.attr("cx", function(d){ return xScale(d.Price)})
-  nonModernCirclesText.attr("dx", function(d){ return xScale(d.Price)})
+  nonModernCirclesText1.attr("dx", function(d){ return xScale(d.Price)})
+  nonModernCirclesText2.attr("dx", function(d){ return xScale(d.Price)})
+  nonModernCirclesText3.attr("dx", function(d){ return xScale(d.Price)})
 
   nonModernCirclesGroup
   .attr("transform", function(d) {
